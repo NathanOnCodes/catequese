@@ -2,6 +2,13 @@ from ninja import Schema
 from typing import Optional
 
 
+class RegisterIn(Schema):
+    """Schema para requisição de registro de novo usuario"""
+    username: str
+    email: str
+    password: str
+
+
 class LoginIn(Schema):
     """Schema para requisição de login"""
     username: str

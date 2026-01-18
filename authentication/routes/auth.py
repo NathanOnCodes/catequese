@@ -1,14 +1,25 @@
 from ninja import Router
 from ninja.errors import HttpError
 from django.contrib.auth import authenticate
-from django_ninja_jwt.tokens import RefreshToken
-from django_ninja_jwt.tokens import Token
-from auth.schemas.auth import LoginInput, TokenOutput, RefreshInput, TokenOutput
-from auth.schemas.auth import VerifyInput, SuccessMessage, ErrorDetail
+from ninja_jwt.tokens import RefreshToken
+from ninja_jwt.tokens import Token
+from authentication.schemas.auth import LoginIn, TokenOut, RefreshIn
+from authentication.schemas.auth import VerifyInput, SuccessMessage, ErrorDetail, RegisterIn
 
 
 
 router = Router()
+
+
+
+@router.post(
+    "/register",
+    response={201: dict, 400: ErrorDetail},
+    summary="Cadastro de usuario.",
+    description="Cadastro de um novo usuario."
+)
+def register(request, registro: RegisterIn):
+    pass
 
 
 @router.post(
@@ -36,7 +47,7 @@ def login(request, login: LoginIn):
 
 @router.post(
     "/refresh", 
-    response={200: TokenOut, 401: ErrorOut},
+    response={200: TokenOut, 401: ErrorDetail},
     summary="Refresh token",
     description="Renova o access token usando o refresh token."
 )
@@ -54,7 +65,7 @@ def refresh_token(request, data: RefreshIn):
 
 
 @router.post(
-    "/verify/",
+    "/verify",
     response={200: SuccessMessage, 401: ErrorDetail},
     summary="Verify Token",
     description="Verifica a validade de um token (access ou refresh)."
