@@ -26,8 +26,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'rest_framework_simplejwt',
+
+    # Django Ninja
+    'django_ninja_jwt',
+    'django_ninja_jwt.token_blacklist', 
     'ninja',
     'corsheaders',
 
