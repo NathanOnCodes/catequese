@@ -28,14 +28,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Django Ninja
-    'django_ninja_jwt',
-    'django_ninja_jwt.token_blacklist', 
+    'ninja_extra',
+    'ninja_jwt',
     'ninja',
     'corsheaders',
 
 
     # Apps
-    'auth.apps.AuthConfig',
+    'authentication.apps.AuthenticationConfig',
 ]
 
 MIDDLEWARE = [
