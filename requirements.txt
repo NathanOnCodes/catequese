@@ -1,0 +1,21 @@
+# Django and core
+Django>=4.2,<5.0
+
+# Django Ninja (API REST)
+django-ninja>=1.0.0
+
+# REST Framework
+djangorestframework>=3.14.0
+
+# JWT Authentication
+djangorestframework-simplejwt>=5.3.0
+
+# Environment variables
+python-dotenv>=1.0.0
+
+# CORS headers
+django-cors-headers>=4.3.0
+
+# Database (SQLite is included with Python, but for production)
+# psycopg2>=2.9.9  # Uncomment for PostgreSQL
+# mysqlclient>=2.2.0  # Uncomment for MySQL
