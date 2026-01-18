@@ -1,66 +1,74 @@
 from ninja import Router
+from ninja.errors import HttpError
 from django.contrib.auth import authenticate
-from rest_framework_simplejwt.tokens import RefreshToken
-from auth.schemas.auth import LoginIn, RefreshIn, TokenOut, UserOut, ErrorOut
+from django_ninja_jwt.tokens import RefreshToken
+from django_ninja_jwt.tokens import Token
+from auth.schemas.auth import LoginInput, TokenOutput, RefreshInput, TokenOutput
+from auth.schemas.auth import VerifyInput, SuccessMessage, ErrorDetail
+
+
 
 router = Router()
 
 
-@router.post("/login", response={200: TokenOut, 401: ErrorOut})
-def login(request, data: LoginIn):
+@router.post(
+    "/login", 
+    response={200: TokenOut, 401: ErrorDetail},
+    summary="Login",
+    description="Autentica o usuário e retorna um par de tokens (access e refresh)."
+)
+def login(request, login: LoginIn):
     """
     Endpoint de login que retorna tokens JWT
     """
-    user = authenticate(username=data.username, password=data.password)
-    
-    if user is None:
-        return 401, {"detail": "Credenciais inválidas"}
+    user = authenticate(username=login.username, password=login.password)
+
+    if not user:
+        raise HttpError(401, "Credenciais inválidas")
     
     refresh = RefreshToken.for_user(user)
-    
+
     return {
         "access_token": str(refresh.access_token),
-        "refresh_token": str(refresh),
-        "token_type": "Bearer"
+        "refresh": str(refresh)
     }
+ 
 
-
-@router.post("/refresh", response={200: TokenOut, 401: ErrorOut})
+@router.post(
+    "/refresh", 
+    response={200: TokenOut, 401: ErrorOut},
+    summary="Refresh token",
+    description="Renova o access token usando o refresh token."
+)
 def refresh_token(request, data: RefreshIn):
     """
     Endpoint para refresh do token JWT
     """
     try:
-        refresh = RefreshToken(data.refresh_token)
+        refresh = RefreshToken(data.refresh)
         access_token = str(refresh.access_token)
-        
-        # Gera um novo refresh token e invalida o antigo
-        refresh.blacklist()
-        new_refresh = RefreshToken.for_user(
-            type('User', (), {'id': refresh.payload.get('user_id')})()
-        )
-        
-        return {
-            "access_token": access_token,
-            "refresh_token": str(new_refresh),
-            "token_type": "Bearer"
-        }
+        return 200, {"access": new_access_token}
+
     except Exception as e:
-        return 401, {"detail": f"Token inválido: {str(e)}"}
+        raise HttpError(401, "Refresh token inválido")
 
 
-@router.get("/me", response={200: UserOut, 401: ErrorOut})
-def get_current_user(request):
+@router.post(
+    "/verify/",
+    response={200: SuccessMessage, 401: ErrorDetail},
+    summary="Verify Token",
+    description="Verifica a validade de um token (access ou refresh)."
+)
+def verify_token(request, data: VerifyInput):
     """
-    Endpoint para obter informações do usuário atual
+    Endpoint para verificação de token JWT
     """
-    if not request.user.is_authenticated:
-        return 401, {"detail": "Não autenticado"}
-    
-    return {
-        "id": request.user.id,
-        "username": request.user.username,
-        "email": request.user.email,
-        "first_name": request.user.first_name,
-        "last_name": request.user.last_name,
-    }
+    try:
+        if not data.token:
+            raise HttpError(401, "Token inválido")
+        
+        token_instancia = Token(data.token)
+        return 200, {"detail": "Token válido"}
+    except:
+        raise HttpError(401, "Token inválido")
+   

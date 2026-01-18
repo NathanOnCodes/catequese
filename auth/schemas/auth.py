@@ -20,15 +20,15 @@ class TokenOut(Schema):
     token_type: str = "Bearer"
 
 
-class UserOut(Schema):
-    """Schema para resposta de dados do usuário"""
-    id: int
-    username: str
-    email: str
-    first_name: str
-    last_name: str
+class VerifyInput(Schema):
+    """Schema para os dados de entrada na verificação de token."""
+    token: str
 
+class SuccessMessage(Schema):
+    """Schema genérico para mensagens de sucesso ou confirmação."""
+    detail: str
 
-class ErrorOut(Schema):
-    """Schema para resposta de erro"""
+# Exemplo de schema de erro (opcional, mas útil)
+class ErrorDetail(Schema):
+    """Schema para detalhes de erro."""
     detail: str
