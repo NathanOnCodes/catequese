@@ -9,7 +9,7 @@ api = NinjaAPI(
     docs_url="/docs"
 )
 
-api.add_router("/auth/", auth_router)
+api.add_router("/auth/", auth_router, tags=["Autenticacão"])
 
 urlpatterns = [
     path("admin/", admin.site.urls),
